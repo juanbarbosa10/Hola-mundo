@@ -1,1 +1,160 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fútbol 2 Jugadores</title>
+
+<style>
+body{
+    margin:0;
+    background:#1b1b1b;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+}
+
+canvas{
+    background:#2E8B57;
+    border:5px solid white;
+}
+
+#info{
+    position:absolute;
+    top:15px;
+    color:white;
+    font-family:Arial;
+    font-size:24px;
+    font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="info">
+Azul 0 - 0 Rojo | Tiempo: <span id="time">90</span>
+</div>
+
+<canvas id="game" width="1000" height="600"></canvas>
+
+<script>
+
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+
+let scoreBlue=0;
+let scoreRed=0;
+let time=90;
+
+const keys={};
+
+document.addEventListener("keydown",(e)=>{
+keys[e.key]=true;
+});
+
+document.addEventListener("keyup",(e)=>{
+keys[e.key]=false;
+});
+
+const player1={
+x:150,
+y:300,
+r:20,
+color:"blue",
+speed:4
+};
+
+const player2={
+x:850,
+y:300,
+r:20,
+color:"red",
+speed:4
+};
+
+const ball={
+x:500,
+y:300,
+r:12,
+vx:0,
+vy:0
+};
+
+setInterval(()=>{
+if(time>0){
+time--;
+document.getElementById("time").textContent=time;
+}
+},1000);
+
+function resetBall(){
+ball.x=500;
+ball.y=300;
+ball.vx=0;
+ball.vy=0;
+player1.x=150;
+player1.y=300;
+player2.x=850;
+player2.y=300;
+}
+
+function drawField(){
+
+ctx.fillStyle="#2E8B57";
+ctx.fillRect(0,0,1000,600);
+
+ctx.strokeStyle="white";
+ctx.lineWidth=4;
+
+ctx.strokeRect(0,0,1000,600);
+
+ctx.beginPath();
+ctx.arc(500,300,80,0,Math.PI*2);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(500,0);
+ctx.lineTo(500,600);
+ctx.stroke();
+
+ctx.strokeRect(0,200,70,200);
+ctx.strokeRect(930,200,70,200);
+
+}
+
+function drawPlayer(p){
+
+ctx.beginPath();
+ctx.fillStyle=p.color;
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+
+}
+
+function drawBall(){
+
+ctx.beginPath();
+ctx.fillStyle="white";
+ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);
+ctx.fill();
+
+}
+
+function update(){
+
+// Jugador azul
+if(keys["w"]) player1.y-=player1.speed;
+if(keys["s"]) player1.y+=player1.speed;
+if(keys["a"]) player1.x-=player1.speed;
+if(keys["d"]) player1.x+=player1.speed;
+
+// Jugador rojo
+if(keys["ArrowUp"]) player2.y-=player2.speed;
+if(keys["ArrowDown"]) player2.y+=player2.speed;
+if(keys["ArrowLeft"]) player2.x-=player2.speed;
+if(keys["ArrowRight"]) player2.x+=player2.speed;
