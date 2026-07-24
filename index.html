@@ -158,3 +158,110 @@ if(keys["ArrowUp"]) player2.y-=player2.speed;
 if(keys["ArrowDown"]) player2.y+=player2.speed;
 if(keys["ArrowLeft"]) player2.x-=player2.speed;
 if(keys["ArrowRight"]) player2.x+=player2.speed;
+    // Limitar jugadores al campo
+player1.x=Math.max(player1.r,Math.min(1000-player1.r,player1.x));
+player1.y=Math.max(player1.r,Math.min(600-player1.r,player1.y));
+
+player2.x=Math.max(player2.r,Math.min(1000-player2.r,player2.x));
+player2.y=Math.max(player2.r,Math.min(600-player2.r,player2.y));
+
+// Contacto con el balón
+[player1,player2].forEach(p=>{
+
+let dx=ball.x-p.x;
+let dy=ball.y-p.y;
+let dist=Math.sqrt(dx*dx+dy*dy);
+
+if(dist<p.r+ball.r){
+
+ball.x=p.x+(dx/dist)*(p.r+ball.r);
+ball.y=p.y+(dy/dist)*(p.r+ball.r);
+
+// Disparo
+if((p===player1 && keys[" "])||(p===player2 && keys["Enter"])){
+
+ball.vx=(dx/dist)*12;
+ball.vy=(dy/dist)*12;
+
+}else{
+
+ball.vx+=(dx/dist)*0.8;
+ball.vy+=(dy/dist)*0.8;
+
+}
+
+}
+
+});
+
+// Movimiento del balón
+ball.x+=ball.vx;
+ball.y+=ball.vy;
+
+// Fricción
+ball.vx*=0.98;
+ball.vy*=0.98;
+
+// Rebotes
+if(ball.y<ball.r||ball.y>600-ball.r){
+ball.vy*=-1;
+}
+
+if(ball.x<ball.r){
+if(ball.y>200&&ball.y<400){
+
+scoreRed++;
+document.getElementById("info").innerHTML=
+`Azul ${scoreBlue} - ${scoreRed} Rojo | Tiempo: <span id="time">${time}</span>`;
+
+setTimeout(resetBall,1000);
+
+}else{
+
+ball.vx*=-1;
+
+}
+}
+
+if(ball.x>1000-ball.r){
+
+if(ball.y>200&&ball.y<400){
+
+scoreBlue++;
+
+document.getElementById("info").innerHTML=
+`Azul ${scoreBlue} - ${scoreRed} Rojo | Tiempo: <span id="time">${time}</span>`;
+
+setTimeout(resetBall,1000);
+
+}else{
+
+ball.vx*=-1;
+
+}
+}
+
+}
+
+function draw(){
+
+drawField();
+drawPlayer(player1);
+drawPlayer(player2);
+drawBall();
+
+}
+
+function game(){
+
+update();
+draw();
+requestAnimationFrame(game);
+
+}
+
+game();
+
+</script>
+</body>
+</html>
